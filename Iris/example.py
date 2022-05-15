@@ -7,6 +7,7 @@ from sklearn.preprocessing import LabelEncoder
 from keras.models import Sequential
 from keras.layers import Dense
 from tensorflow.keras.optimizers import Adam
+from sklearn.metrics import classification_report, confusion_matrix
 #from tensorflow import keras
 #from tensorflow.keras import layers
 #.\tf\Scripts\activate
@@ -42,8 +43,8 @@ lEncoded = encoder.fit_transform(labels) #fitting and transforming data
 labelsE = pd.get_dummies(lEncoded).values #encoding labels
 #print(labelsE, features)
 
-fd = int(.7*len(data)) #Getting first index point of division 
-sd = fd+int(.15*len(data)) #Getting second index point of division
+fd = int(.7*len(data)) #Getting first split index point of division 
+sd = fd+int(.15*len(data)) #Getting second split index point of division
 
 trainF, validationF, testF = np.split(features, [fd, sd]) #split data in train, test and validation sets
 trainLE, validationLE, testLE = np.split(labelsE, [fd, sd]) #split data in train, test and validation sets
@@ -57,3 +58,9 @@ model.compile(Adam(lr=0.2), 'categorical_crossentropy', metrics=['accuracy']) #d
 print(model.summary())
 
 model.fit(trainF, trainLE, epochs=100) #training the model
+
+labelPred = model.predict(testF)
+#print(labelPred)
+
+labelTestClass = np.argmax(testLE, axis=1)
+labelPredClass = np.argmax(labelTestClass, axis=1)
